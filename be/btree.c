@@ -10738,7 +10738,6 @@ static void btree_ut_kv_oper_thread_handler(struct btree_ut_thread_info *ti)
 			for (i = 0; i < ksize / sizeof(get_key[0]); i++) {
 				key[i] = get_key[i];
 			}
-
 			UT_THREAD_QUIESCE_IF_REQUESTED();
 		}
 
@@ -13337,7 +13336,7 @@ static void ut_mtree_mthread_test(void)
 			cpu++;
 			if (cpu >= cpu_count)
 				/**
-				 *  Circle around if thread count is higher 
+				 *  Circle around if thread count is higher
 				 *  than the CPU cores in the system.
 				 */
 				cpu = 1;
@@ -13366,7 +13365,7 @@ static void ut_mtree_mthread_test(void)
 			M0_ASSERT(rc == 0);
 
 			/** Create temp node space and
-  			 *  use it as root node for btree 
+  			 *  use it as root node for btree
   			 */
 			buf = M0_BUF_INIT(rnode_sz, NULL);
 			M0_BE_ALLOC_ALIGN_BUF_SYNC(&buf, rnode_sz_shift, seg,
