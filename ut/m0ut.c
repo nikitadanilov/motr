@@ -287,14 +287,10 @@ static void tests_add(struct m0_ut_module *m)
 	m0_ut_add(m, &m0_fom_stats_ut, true);
 	m0_ut_add(m, &m0_net_bulk_if_ut, true);
 	m0_ut_add(m, &m0_net_bulk_mem_ut, true);
-<<<<<<< HEAD
+#if defined(M0_LINUX)
 	m0_ut_add(m, &m0_net_lnet_ut, LNET_ENABLED);
 	m0_ut_add(m, &m0_net_libfab_ut, USE_LIBFAB);
-=======
-#if defined(M0_LINUX)
-	m0_ut_add(m, &m0_net_lnet_ut, !USE_LIBFAB);
 #endif
->>>>>>> darwin: tools build now.
 	m0_ut_add(m, &m0_net_misc_ut, true);
 	m0_ut_add(m, &m0_net_module_ut, true);
 	m0_ut_add(m, &m0_net_test_ut, true);
