@@ -354,7 +354,7 @@ static void *minmax2_output_prepare(struct m0_buf *result,
  out:
 	/* Print the result. */
 	if (last_unit && prev != NULL) {
-		printf("idx=%lu val=%lf\n", prev->mr_idx, prev->mr_val);
+		printf("idx=%" PRId64 " val=%lf\n", prev->mr_idx, prev->mr_val);
 		mm_result_free_xcode_bufs(prev);
 		m0_free(prev);
 		prev = NULL;
