@@ -1450,25 +1450,16 @@ M0_INTERNAL int m0_rpc_conn_ha_timer_start(struct m0_rpc_conn *conn)
 
 M0_INTERNAL void m0_rpc_conn_ha_timer_stop(struct m0_rpc_conn *conn)
 {
-<<<<<<< HEAD
-	M0_ENTRY("conn %p", conn);
-=======
 	struct m0_sm_timer *hat = &conn->c_ha_timer;
+	M0_ENTRY("conn %p", conn);
 
->>>>>>> Make sure &conn->c_ha_timer is always finalised.
 	M0_PRE(m0_rpc_machine_is_locked(conn->c_rpc_machine));
 	if (m0_sm_timer_is_armed(hat)) {
 		M0_LOG(M0_DEBUG, "Cancelling HA timer; rpc conn=%p", conn);
 		m0_sm_timer_cancel(hat);
 	}
-<<<<<<< HEAD
-	if (M0_IN(conn->c_ha_timer.tr_timer.t_state,
-		 (M0_TIMER_STOPPED, M0_TIMER_INITED)))
-		m0_sm_timer_fini(&conn->c_ha_timer);
-=======
 	if (hat->tr_timer.t_state != M0_TIMER_UNINIT)
 		m0_sm_timer_fini(hat);
->>>>>>> Make sure &conn->c_ha_timer is always finalised.
 }
 
 /**
