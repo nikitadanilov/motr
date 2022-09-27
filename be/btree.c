@@ -10060,6 +10060,52 @@ static void ut_multi_stream_kv_oper(void)
 	btree_ut_fini();
 }
 
+#if defined(M0_DARWIN)
+struct random_data {
+};
+
+static int random_r(struct random_data *restrict buf,
+                    int32_t *restrict result)
+{
+	*result = random();
+	return 0;
+}
+
+static int srandom_r(unsigned int seed, struct random_data *buf)
+{
+	srandom(seed);
+	return 0;
+}
+
+static int initstate_r(unsigned int seed, char *restrict statebuf,
+		size_t statelen, struct random_data *restrict buf)
+{
+	return initstate(seed, statebuf, statelen) != NULL ? 0 : -1;
+}
+
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
+static uint64_t available_mem(void)
+{
+	int    umem;
+	int    mib[2] = { CTL_HW, HW_USERMEM };
+	size_t len    = sizeof umem;
+	int    result;
+
+	result = sysctl(mib, ARRAY_SIZE(mib), &umem, &len, NULL, 0);
+	M0_ASSERT(result == 0);
+ 	return umem;
+}
+#endif
+
+#if defined(M0_LINUX)
+static uint64_t available_mem(void)
+{
+	return sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
+}
+#endif
+
 struct btree_ut_thread_info {
 	struct m0_thread      ti_q;           /** Used for thread operations. */
 	struct m0_bitmap      ti_cpu_map;     /** CPU map to run this thread. */
@@ -12480,7 +12526,7 @@ static void ut_lru_test(void)
 	btree_ut_init();
 
 start_lru_test:
-	mem_init = sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
+	mem_init = available_mem();
 	M0_LOG(M0_INFO,"Mem Init (%"PRId64").\n",mem_init);
 
 	M0_ASSERT(rnode_sz != 0 && m0_is_po2(rnode_sz));
@@ -12542,7 +12588,7 @@ start_lru_test:
 		m0_be_tx_fini(tx);
 	}
 
-	mem_after_alloc = sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
+	mem_after_alloc = available_mem();
 	mem_increased   = mem_init - mem_after_alloc;
 	if (mem_increased < 0) {
 		restart_test = true;
@@ -12570,7 +12616,7 @@ start_lru_test:
 	M0_ASSERT(ndlist_tlist_length(&btree_lru_nds) > 0);
 
 	mem_freed      = m0_btree_lrulist_purge(mem_increased/2, 0);
-	mem_after_free = sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
+	mem_after_free = available_mem();
 	M0_LOG(M0_INFO, "Mem After Free (%"PRId64") || Mem freed (%"PRId64").\n",
 			 mem_after_free, mem_freed);
 
@@ -13559,9 +13605,6 @@ static int ut_btree_suite_init(void)
 	m0_be_ut_backend_init(ut_be);
 	m0_be_ut_seg_init(ut_seg, ut_be, BE_UT_SEG_SIZE);
 	seg = ut_seg->bus_seg;
-
-	g_process_fid = g_process_fid;
-
 	M0_LEAVE();
 	return 0;
 }
