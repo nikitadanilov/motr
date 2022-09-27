@@ -1372,8 +1372,10 @@ static void btree_run(struct workload *w, struct workload_task *task)
 
 	if ( cwb->cwb_key_size < sizeof(uint64_t) ||
 	     cwb->cwb_key_size > cwb->cwb_max_key_size) {
-		cr_log(CLL_ERROR, "Key size is not within range[%"PRIu64":%d]\n",
-		       sizeof(uint64_t), cwb->cwb_max_key_size);
+		cr_log(CLL_ERROR,
+		       "Key size is not within range[%" PRIu64 ":%d]\n",
+		       (uint64_t)sizeof(uint64_t),
+		       cwb->cwb_max_key_size);
 		return;
 	}
 
