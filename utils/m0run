@@ -31,7 +31,7 @@ readonly base_rundir='/var/motr'
 readonly top_srcdir=$(echo $(dirname $self) \
                       | sed -r -e 's#/?utils/?$##' -e 's#^/usr/s?bin##')
 
-M0_SRC_DIR=`readlink -f $0`
+M0_SRC_DIR=$self
 M0_SRC_DIR=${M0_SRC_DIR%/*/*}
 
 . $M0_SRC_DIR/utils/functions # m0_default_xprt
@@ -299,14 +299,10 @@ run_valgrind()
 # not found.
 load_modules()
 {
-<<<<<<< HEAD
-    if [[ $(is_lnet_available) == "true" ]]; then
-=======
     if [ $(uname) != Linux ] ;then
 	return
     fi
     if [ "$XPRT" = "lnet" ]; then
->>>>>>> m0run: add lldb support.
         if [[ -n "$top_srcdir" ]] ; then
             source $top_srcdir/utils/modload-all.sh
         else
@@ -365,8 +361,8 @@ set -e
 parse_cli_options "$@"
 eval set -- "$cli_args"
 
-[[ $UID -eq 0 ]] ||
-    die 'Please, run this script with "root" privileges.'
+#[[ $UID -eq 0 ]] ||
+#    die 'Please, run this script with "root" privileges.'
 
 binary=$1
 [[ -n "$binary" ]] ||
@@ -434,11 +430,8 @@ if [[ -n "$debugger" ]] ; then
     case $debugger in
         gdb)                  run_gdb "$@" ;;
         cgdb)                 run_cgdb "$@" ;;
-<<<<<<< HEAD
         user)                 run_user "$@" ;;
-=======
         lldb)                 run_lldb "$@" ;;
->>>>>>> m0run: add lldb support.
         valgrind)             run_valgrind "$@" ;;
         valgrind-memcheck)    run_valgrind_memcheck "$@" ;;
         valgrind-cachegrind)  run_valgrind_cachegrind "$@" ;;
