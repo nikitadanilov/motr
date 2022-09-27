@@ -55,7 +55,7 @@ M0_INTERNAL int m0_calculate_md5(struct m0_md5_pi *pi,
 				 struct m0_bufvec *bvec,
 				 enum m0_pi_calc_flag flag)
 {
-#ifndef __KERNEL__
+#if USE_MD5
 	MD5_CTX context;
 	int i;
 	int rc;
@@ -68,7 +68,7 @@ M0_INTERNAL int m0_calculate_md5(struct m0_md5_pi *pi,
 	pi->pimd5_hdr.pih_size = sizeof(struct m0_md5_pi) /
 				 M0_CKSUM_DATA_ROUNDOFF_BYTE;
 	if (M0_CKSUM_PAD_MD5)
-		memset(pi->pimd5_pad,0,sizeof(pi->pimd5_pad));
+		memset(pi->pimd5_pad, 0, sizeof(pi->pimd5_pad));
 
 	/* This call is for first data unit, need to initialize prev_context */
 	if (flag & M0_PI_CALC_UNIT_ZERO) {
