@@ -31,10 +31,6 @@
  * e.g. MD5, CRC, etc
  */
 
-#ifndef __KERNEL__
-#include <openssl/md5.h>
-#endif
-
 /*********************** MD5 Cksum Structure ***********************/
 /* Padding size for MD5 structure */
 #define M0_CKSUM_PAD_MD5 (M0_CALC_PAD((sizeof(struct m0_pi_hdr) + \
@@ -45,7 +41,7 @@
 struct m0_md5_pi {
 	/* header for protection info */
 	struct m0_pi_hdr pimd5_hdr;
-#ifndef __KERNEL__
+#if HAS_MD5
 	/* protection value computed for the current data*/
 	unsigned char    pimd5_value[MD5_DIGEST_LENGTH];
 	/* structure should be 32 byte aligned */
@@ -67,7 +63,7 @@ struct m0_md5_pi {
 struct m0_md5_inc_context_pi {
 	/* header for protection info */
 	struct m0_pi_hdr pimd5c_hdr;
-#ifndef __KERNEL__
+#if HAS_MD5
 	/*context of previous data unit, required for checksum computation */
 	unsigned char    pimd5c_prev_context[sizeof(MD5_CTX)];
 	/* protection value computed for the current data unit.
