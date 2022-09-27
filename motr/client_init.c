@@ -100,6 +100,8 @@ static int initlift_layouts(struct m0_sm *mach);
 static int initlift_idx_service(struct m0_sm *mach);
 static int initlift_rootfid(struct m0_sm *mach);
 static int initlift_addb2(struct m0_sm *mach);
+static int initlift_dtm0(struct m0_sm *mach);
+static int initlift_fis(struct m0_sm *mach);
 
 /**
  * State machine phases for client operations.
@@ -165,24 +167,37 @@ struct m0_sm_state_descr initlift_phases[] = {
 	[IL_IDX_SERVICE] = {
 		.sd_name = "init/fini-resource-manager",
 		.sd_allowed = M0_BITS(IL_ROOT_FID,
-				      IL_LAYOUT_DB),
+				      IL_LAYOUT_DB,
+				      IL_IDX_SERVICE),
 		.sd_in = initlift_idx_service,
 	},
 	[IL_ROOT_FID] = {
 		.sd_name = "retrieve-root-fid",
-		.sd_allowed = M0_BITS(IL_ADDB2,
+		.sd_allowed = M0_BITS(IL_FIS,
 				      IL_IDX_SERVICE),
 		.sd_in = initlift_rootfid,
 	},
+	[IL_FIS] = {
+		.sd_name = "init/fini-fis",
+		.sd_allowed = M0_BITS(IL_ADDB2,
+				      IL_ROOT_FID),
+		.sd_in = initlift_fis,
+	},
 	[IL_ADDB2] = {
 		.sd_name = "init/fini-addb2",
-		.sd_allowed = M0_BITS(IL_INITIALISED,
-				      IL_ROOT_FID),
+		.sd_allowed = M0_BITS(IL_DTM0,
+				      IL_FIS),
 		.sd_in = initlift_addb2,
+	},
+	[IL_DTM0] = {
+		.sd_name = "init/fini-dtm0",
+		.sd_allowed = M0_BITS(IL_INITIALISED,
+				      IL_ADDB2),
+		.sd_in = initlift_dtm0,
 	},
 	[IL_INITIALISED] = {
 		.sd_name = "initialised",
-		.sd_allowed = M0_BITS(IL_ADDB2),
+		.sd_allowed = M0_BITS(IL_DTM0),
 	},
 	[IL_FAILED] = {
 		.sd_name = "failed",
@@ -225,10 +240,13 @@ struct m0_sm_trans_descr initlift_trans[] = {
 				       IL_FIS},
 	{"initialising-addb2",         IL_FIS,
 				       IL_ADDB2},
-	{"initialised",                IL_ADDB2, IL_INITIALISED},
+	{"initialising-dtm0",          IL_ADDB2, IL_DTM0},
+	{"initialised",                IL_DTM0, IL_INITIALISED},
 
 	/* FINI section*/
 	{"shutting-down",              IL_INITIALISED,
+				       IL_DTM0},
+	{"finalising-dtm0",            IL_DTM0,
 				       IL_ADDB2},
 
 	{"finalising-addb2",           IL_ADDB2,

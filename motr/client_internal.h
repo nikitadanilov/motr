@@ -1025,7 +1025,9 @@ enum initlift_states {
 	IL_LAYOUT_DB,
 	IL_IDX_SERVICE,
 	IL_ROOT_FID, /* TODO: remove this m0t1fs ism */
+	IL_FIS,
 	IL_ADDB2,
+	IL_DTM0,
 	IL_INITIALISED,
 	IL_FAILED,
 };
