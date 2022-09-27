@@ -259,12 +259,14 @@ static void dtm0_log0_fini(struct m0_be_domain *dom, const char *suffix,
 {
 }
 
-static inline m0_bcount_t dtm0_log_transactions_ksize(const void *key)
+__attribute__((unused)) static inline m0_bcount_t
+dtm0_log_transactions_ksize(const void *key)
 {
 	return sizeof ((struct dtm0_log_record *)NULL)->lr_descriptor.dtd_id;
 }
 
-static inline m0_bcount_t dtm0_log_transactions_vsize(const void *value)
+__attribute__((unused)) static inline m0_bcount_t
+dtm0_log_transactions_vsize(const void *value)
 {
 	return sizeof(struct dtm0_log_record *);
 }
